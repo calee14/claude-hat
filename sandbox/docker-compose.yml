@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # The vulnerable Next.js application
+  vulnerable-app:
+    build: .
+    container_name: vulnerable-nextjs-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_KEY=sk_live_super_secret_key_12345
+      - NEXT_PUBLIC_DATABASE_URL=postgresql://admin:password123@db:5432/mydb
+      - NEXT_PUBLIC_ADMIN_PASSWORD=admin123
+      - API_SECRET=this_should_be_secret
+      - JWT_SECRET=weak_jwt_secret
+      - ADMIN_TOKEN=admin_super_secret_token
+      - DEBUG=true
+    networks:
+      - vuln-network
+    restart: unless-stopped
+
+  # Testing environment (for your security agent)
+  security-tester:
+    image: python:3.11-slim
+    container_name: security-tester
+    working_dir: /workspace
+    volumes:
+      - ./testing:/workspace
+    networks:
+      - vuln-network
+    command: tail -f /dev/null  # Keep container running
+    depends_on:
+      - vulnerable-app
+
+networks:
+  vuln-network:
+    driver: bridge
+    internal: false  # Change to true to prevent external access
