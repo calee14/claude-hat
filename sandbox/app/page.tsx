@@ -62,23 +62,109 @@ export default function Home() {
               </button>
               <code>/api/admin?admin=true</code> - Auth Bypass
             </li>
+            <li>
+              <button onClick={() => testAPI('/api/upload')} style={{ padding: '5px 10px', marginRight: '10px' }}>
+                Test
+              </button>
+              <code>/api/upload</code> - Unrestricted File Upload, Path Traversal
+            </li>
+            <li>
+              <button onClick={() => testAPI('/api/auth')} style={{ padding: '5px 10px', marginRight: '10px' }}>
+                Test
+              </button>
+              <code>/api/auth</code> - JWT Vulnerabilities (algorithm 'none', no verification)
+            </li>
+            <li>
+              <button onClick={() => testAPI('/api/redirect')} style={{ padding: '5px 10px', marginRight: '10px' }}>
+                Test
+              </button>
+              <code>/api/redirect</code> - Open Redirect
+            </li>
+            <li>
+              <button onClick={() => testAPI('/api/xml')} style={{ padding: '5px 10px', marginRight: '10px' }}>
+                Test
+              </button>
+              <code>/api/xml</code> - XML External Entity (XXE)
+            </li>
+            <li>
+              <button onClick={() => testAPI('/api/graphql')} style={{ padding: '5px 10px', marginRight: '10px' }}>
+                Test
+              </button>
+              <code>/api/graphql</code> - GraphQL Introspection, PII Exposure
+            </li>
+            <li>
+              <button onClick={() => testAPI('/api/deserialize')} style={{ padding: '5px 10px', marginRight: '10px' }}>
+                Test
+              </button>
+              <code>/api/deserialize</code> - Insecure Deserialization, RCE
+            </li>
+            <li>
+              <button onClick={() => testAPI('/api/search')} style={{ padding: '5px 10px', marginRight: '10px' }}>
+                Test
+              </button>
+              <code>/api/search</code> - NoSQL Injection, ReDoS, Code Execution
+            </li>
           </ul>
         </div>
       </div>
 
       <div style={{ marginBottom: '30px' }}>
-        <h2>🔍 Vulnerability Categories</h2>
+        <h2>🔍 Vulnerability Categories (28+ Types)</h2>
+
+        <h3 style={{ marginTop: '20px', color: '#dc3545' }}>🔴 Injection Vulnerabilities</h3>
         <ul>
-          <li><strong>SQL Injection:</strong> /api/users?username parameter</li>
-          <li><strong>Authentication Bypass:</strong> /api/admin (multiple methods)</li>
-          <li><strong>XSS:</strong> Profile page bio field</li>
-          <li><strong>Command Injection:</strong> searchFiles server action</li>
-          <li><strong>Path Traversal:</strong> readFile server action</li>
-          <li><strong>SSRF:</strong> fetchExternalData server action</li>
-          <li><strong>Information Disclosure:</strong> All endpoints leak sensitive data</li>
-          <li><strong>Insecure Direct Object Reference:</strong> deleteUser action</li>
-          <li><strong>Missing Authorization:</strong> Server actions lack auth checks</li>
-          <li><strong>Exposed Secrets:</strong> Check .env and API responses</li>
+          <li><strong>SQL Injection:</strong> /api/users?username parameter (eval-based)</li>
+          <li><strong>NoSQL Injection:</strong> /api/search?category ($ne, $gt operators)</li>
+          <li><strong>Command Injection:</strong> searchFiles() server action</li>
+          <li><strong>XXE (XML External Entity):</strong> /api/xml (POST)</li>
+          <li><strong>Template Injection (SSTI):</strong> renderTemplate() server action</li>
+          <li><strong>Regex Injection (ReDoS):</strong> /api/search?q parameter</li>
+          <li><strong>XSS:</strong> Profile page bio field (dangerouslySetInnerHTML)</li>
+          <li><strong>Code Injection:</strong> Multiple eval() uses on user input</li>
+        </ul>
+
+        <h3 style={{ marginTop: '20px', color: '#fd7e14' }}>🟠 Authentication & Authorization</h3>
+        <ul>
+          <li><strong>Auth Bypass:</strong> /api/admin (query param, cookie, bearer token)</li>
+          <li><strong>JWT Vulnerabilities:</strong> /api/auth (algorithm 'none', no signature)</li>
+          <li><strong>Missing Authorization:</strong> All server actions</li>
+          <li><strong>Privilege Escalation:</strong> updateProfile(), createUser() (role manipulation)</li>
+          <li><strong>Mass Assignment:</strong> createUser() accepts any field</li>
+          <li><strong>Weak Session Management:</strong> Cookie deserialization without verification</li>
+        </ul>
+
+        <h3 style={{ marginTop: '20px', color: '#ffc107' }}>🟡 Data Exposure</h3>
+        <ul>
+          <li><strong>Information Disclosure:</strong> /api/users, /api/admin, /api/graphql</li>
+          <li><strong>GraphQL Schema Exposure:</strong> /api/graphql introspection enabled</li>
+          <li><strong>PII Exposure:</strong> SSN, credit cards, passwords in responses</li>
+          <li><strong>Exposed Secrets:</strong> Environment variables, API keys, hardcoded credentials</li>
+          <li><strong>Verbose Errors:</strong> Stack traces, file paths in all error responses</li>
+        </ul>
+
+        <h3 style={{ marginTop: '20px', color: '#28a745' }}>🟢 Access Control</h3>
+        <ul>
+          <li><strong>IDOR:</strong> deleteUser(), getDocument() (no ownership check)</li>
+          <li><strong>Path Traversal:</strong> readFile(), /api/upload?path</li>
+          <li><strong>Unrestricted File Upload:</strong> /api/upload (any file type, no validation)</li>
+          <li><strong>Directory Listing:</strong> /api/upload exposes file paths</li>
+        </ul>
+
+        <h3 style={{ marginTop: '20px', color: '#17a2b8' }}>🔵 Request Manipulation</h3>
+        <ul>
+          <li><strong>SSRF:</strong> fetchExternalData() server action</li>
+          <li><strong>Open Redirect:</strong> /api/redirect (GET & POST)</li>
+          <li><strong>HTTP Parameter Pollution:</strong> /api/search (POST)</li>
+          <li><strong>CORS Misconfiguration:</strong> All endpoints allow cross-origin</li>
+        </ul>
+
+        <h3 style={{ marginTop: '20px', color: '#6610f2' }}>🟣 Business Logic & Crypto</h3>
+        <ul>
+          <li><strong>Race Condition:</strong> withdraw() server action (TOCTOU)</li>
+          <li><strong>Timing Attack:</strong> checkPassword() character-by-character comparison</li>
+          <li><strong>Insecure Randomness:</strong> generateToken() uses Math.random()</li>
+          <li><strong>Insecure Deserialization:</strong> /api/deserialize (RCE via eval)</li>
+          <li><strong>Rate Limiting Missing:</strong> All endpoints (brute force possible)</li>
         </ul>
       </div>
 
@@ -105,8 +191,17 @@ export default function Home() {
       }}>
         <h3>⚠️ Warning</h3>
         <p>
-          This application contains <strong>intentional security vulnerabilities</strong> for educational purposes.
-          Use only in isolated, sandboxed environments. Never expose to the internet.
+          This application contains <strong>28+ intentional security vulnerabilities</strong> for educational and testing purposes.
+          Includes: SQL/NoSQL injection, XXE, SSTI, JWT flaws, GraphQL issues, deserialization attacks, and more.
+          <br /><br />
+          <strong>Use only in isolated, sandboxed environments. Never expose to the internet.</strong>
+        </p>
+        <p style={{ marginTop: '10px', fontSize: '14px' }}>
+          📚 Full documentation: See <code>README.md</code> for complete vulnerability catalog
+          <br />
+          🧪 Testing guide: See <code>TESTING_GUIDE.md</code> for step-by-step exploitation
+          <br />
+          🤖 Security Agent: Run <code>cd security_agent && ./run.sh</code> for automated testing
         </p>
       </div>
 
