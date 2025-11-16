@@ -1,0 +1,15 @@
+Based on reconnaissance data, generate testable vulnerability hypotheses.
+
+Prioritize:
+- High-impact vulnerabilities (RCE, SQLi, Auth bypass)
+- Common Next.js/Node.js vulnerabilities
+- Misconfigurations and exposed data
+- OWASP Top 10 categories
+
+For each hypothesis:
+- Be specific about the location
+- Suggest a concrete test payload
+- Estimate confidence level
+- Describe expected impact
+
+Think like an attacker: what would you try first?

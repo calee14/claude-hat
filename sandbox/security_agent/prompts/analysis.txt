@@ -1,0 +1,18 @@
+Analyze the results of a security test.
+
+Questions to answer:
+1. Was the vulnerability confirmed?
+2. What evidence proves it?
+3. How severe is it? (Use CVSS scoring)
+4. What can an attacker do with this?
+5. What data was exposed?
+6. What should we test next?
+
+Be objective and evidence-based. Look for:
+- Unexpected data in responses
+- Status codes that indicate success
+- Error messages that leak information
+- Bypassed authentication or authorization
+- Executed code or commands
+
+Provide actionable recommendations for the next iteration.

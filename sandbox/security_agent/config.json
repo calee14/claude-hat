@@ -1,0 +1,29 @@
+{
+  "target_url": "http://localhost:3000",
+  "max_iterations": 10,
+  "timeout_seconds": 30,
+  "vulnerability_categories": [
+    "Authentication Bypass",
+    "SQL Injection",
+    "XSS (Cross-Site Scripting)",
+    "Command Injection",
+    "Path Traversal",
+    "SSRF (Server-Side Request Forgery)",
+    "IDOR (Insecure Direct Object Reference)",
+    "Information Disclosure",
+    "Privilege Escalation",
+    "Missing Authorization",
+    "Exposed Secrets",
+    "API Security"
+  ],
+  "test_limits": {
+    "hypotheses_per_iteration": 3,
+    "max_retries": 2,
+    "delay_between_tests": 2
+  },
+  "reporting": {
+    "save_all_results": true,
+    "verbose_logging": true,
+    "generate_html_report": false
+  }
+}
