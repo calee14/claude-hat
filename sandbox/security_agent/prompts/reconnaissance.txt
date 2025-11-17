@@ -1,14 +1,32 @@
-You are a security researcher performing reconnaissance on a web application.
+Generate a Python route discovery script for web application reconnaissance.
 
 Target: {target_url}
 
-Your goal is to map the attack surface and identify potential entry points for security testing.
+Your script must:
 
-Focus on:
-1. **API Endpoints** - List all routes, methods, and parameters
-2. **Authentication** - How does the app handle auth? What mechanisms are in place?
-3. **Input Vectors** - Where does the app accept user input? (query params, headers, cookies, POST bodies)
-4. **Technology Stack** - What frameworks, libraries, and versions?
-5. **Interesting Behaviors** - Anything unusual in responses, headers, or error messages?
+1. **Intelligently spider the application** starting from the base URL
+2. **Discover all routes** by:
+   - Following HTML links (a[href], link[href])
+   - Parsing script tags for API endpoint patterns
+   - Checking common paths (/api/*, /admin/*, /_next/*)
+   - Finding form actions
+   - Detecting AJAX/fetch() calls in JavaScript
 
-Provide structured output that can guide exploit generation.
+3. **Prevent infinite loops**:
+   - Maintain a visited URLs set
+   - Normalize URLs (remove fragments, sort query params)
+   - Max depth limit (default: 3 levels)
+   - Per-request timeout (5 seconds)
+   - Overall script timeout (60 seconds)
+   - Skip external domains
+
+4. **Extract useful data**:
+   - HTTP methods supported (OPTIONS request)
+   - Query parameters in URLs
+   - Form fields and their types
+   - Cookies set by the application
+   - Response headers (X-Powered-By, Server, etc.)
+
+5. **Output clean JSON** with discovered attack surface
+
+The script should be robust, handle errors gracefully, and never crash on 404s or timeouts.

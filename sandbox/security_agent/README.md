@@ -155,42 +155,62 @@ The agent tests for these vulnerability types:
 
 ## How It Works
 
-### Phase 1: Reconnaissance
-- Enumerates API endpoints and routes
-- Identifies authentication mechanisms
-- Maps input vectors (query params, headers, cookies)
-- Analyzes technology stack
+### Route-Based Systematic Testing
 
-### Phase 2: Hypothesis Generation
-- Uses recon data to generate vulnerability theories
-- Prioritizes by likelihood and impact
-- Suggests specific test payloads
-- Assigns confidence levels
+The agent uses a **route-based approach** for thorough, organized testing:
 
-### Phase 3: Script Generation
-- Claude writes Python exploit scripts
-- Scripts use the `requests` library
-- Include error handling and JSON output
-- Non-destructive when possible
+1. **Route Discovery** (Phase 1)
+   - Generates and executes a Python crawler script
+   - Algorithmically discovers all routes/endpoints
+   - Prevents infinite loops with multiple safeguards
+   - Maps complete attack surface
 
-### Phase 4: Execution
-- Runs exploit scripts in isolated subprocess
-- Captures stdout/stderr
-- Enforces 30-second timeout
-- Handles failures gracefully
+2. **Route Selection**
+   - Scores routes by vulnerability potential
+   - Prioritizes API endpoints, admin panels, auth routes
+   - Selects top 7 most promising routes
+   - Ensures comprehensive coverage
 
-### Phase 5: Analysis
-- Claude analyzes exploit results
-- Confirms vulnerability existence
-- Assesses severity (CVSS scoring)
-- Identifies exposed data
-- Suggests next tests
+3. **Per-Route Testing** (Phases 2-5)
+   For each of the 7 routes:
 
-### Learning Loop
-- Tracks tested vectors to avoid duplication
-- Builds on previous findings
-- Adapts testing strategy based on results
-- Iterates until max iterations or no new hypotheses
+   **Phase 2: Hypothesis Generation**
+   - Generates ALL applicable vulnerability types for that route
+   - Route-specific SQL injection, auth bypass, XSS, etc.
+   - 5-10 hypotheses per route
+   - No duplication between routes
+
+   **Phase 3: Script Generation**
+   - Claude writes targeted Python exploit scripts
+   - Route-specific payloads and tests
+   - Uses `requests` library with error handling
+   - Non-destructive when possible
+
+   **Phase 4: Execution**
+   - Runs each exploit script in isolated subprocess
+   - 30-second timeout per test
+   - Captures stdout/stderr
+   - Handles failures gracefully
+
+   **Phase 5: Analysis**
+   - Claude analyzes exploit results
+   - Confirms vulnerability existence
+   - Assesses severity (CVSS)
+   - Identifies exposed data
+
+4. **Final Report**
+   - Groups findings by route
+   - Shows vulnerabilities per endpoint
+   - Severity breakdown
+   - Complete audit trail
+
+### Benefits of Route-Based Testing
+
+- ✅ **No duplication** - Each route tested once for all vulnerabilities
+- ✅ **Systematic** - Methodical coverage of entire attack surface
+- ✅ **Demo-friendly** - Clear progress: "Testing route 3 of 7"
+- ✅ **Thorough** - Every applicable vulnerability tested per route
+- ✅ **Organized results** - Findings grouped by endpoint
 
 ## Example Exploit Scripts
 
